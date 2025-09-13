@@ -175,6 +175,12 @@ class GlfwConan(ConanFile):
                 f'list(APPEND glfw_PKG_DEPS "vulkan")\nlist(APPEND glfw_LIBRARIES "{vulkan_lib}")',
             )
 
+        # adjust dll name here
+        if self.options.shared and self.settings.os == "Windows" and self.settings.compiler == "msvc":
+            replace_in_file(self,os.path.join(self.source_folder,"src","CMakeLists.txt"),
+                            search='set_target_properties(glfw PROPERTIES IMPORT_SUFFIX "dll.lib")',
+                            replace='set_target_properties(glfw PROPERTIES IMPORT_SUFFIX ".lib")')
+        
     def build(self):
         self._patch_sources()
         cmake = CMake(self)
@@ -209,13 +215,16 @@ class GlfwConan(ConanFile):
 
     def package_info(self):
         self.cpp_info.set_property("cmake_file_name", "glfw3")
-        self.cpp_info.set_property("cmake_target_name", "glfw")
+        self.cpp_info.set_property("cmake_target_name", "glfw::glfw")
         self.cpp_info.set_property("pkg_config_name", "glfw3")
         libname = "glfw"
         if self.settings.os == "Windows" or not self.options.shared:
             libname += "3"
         if self.settings.os == "Windows" and self.options.shared:
-            libname += "dll"
+            if self.settings.compiler != "msvc":
+                # MSVC names the import library the same as the dll
+                # so libname is already correct
+                libname += "dll"
             self.cpp_info.defines.append("GLFW_DLL")
         self.cpp_info.libs = [libname]
         if self.settings.os in ["Linux", "FreeBSD"]:
