@@ -1,4 +1,6 @@
 sources:
+  "3.5.0":
+    url: "https://github.com/cginternals/glbinding/archive/v3.5.0.tar.gz"
   "3.3.0":
     url: "https://github.com/cginternals/glbinding/archive/v3.3.0.tar.gz"
     sha256: "a0aa5e67b538649979a71705313fc2b2c3aa49cf9af62a97f7ee9a665fd30564"
