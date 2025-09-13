@@ -1,6 +1,6 @@
 from conan import ConanFile
 from conan.tools.build import can_run
-from conan.tools.cmake import CMake, cmake_layout
+from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 import os
 
 
@@ -14,8 +14,9 @@ class TestPackageConan(ConanFile):
 
     def requirements(self):
         self.requires(self.tested_reference_str)
-        self.requires("glfw/3.3.8")
-
+        self.requires("glfw/3.4", options=dict(shared=True))
+        self.requires("gtest/1.17.0", options=dict(shared=True))
+        
     def build(self):
         cmake = CMake(self)
         cmake.configure()
