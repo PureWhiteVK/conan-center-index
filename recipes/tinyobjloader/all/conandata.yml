@@ -1,4 +1,6 @@
 sources:
+  "2.0.0-release":
+    url: "https://github.com/tinyobjloader/tinyobjloader/archive/refs/heads/release.zip"
   "2.0.0-rc13":
     url: "https://github.com/tinyobjloader/tinyobjloader/archive/refs/tags/v2.0.0rc13.tar.gz"
   "2.0.0-rc10":
