@@ -1,5 +1,6 @@
 from conan import ConanFile
 from conan.tools.build import check_min_cppstd
+from conan.tools.gnu import PkgConfigDeps
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
 from conan.tools.files import (
     apply_conandata_patches,
@@ -47,7 +48,8 @@ class NativeFileDialogExtendedConan(ConanFile):
         cmake_layout(self, src_folder="src")
 
     def requirements(self):
-        pass
+        if self.settings.os == "Linux":
+            self.requires("gtk/system", options={"version": 3})
         # # Always prefer self.requirements() method instead of self.requires attribute.
         # self.requires("dependency/0.8.1")
         # if self.options.with_foobar:
@@ -90,6 +92,11 @@ class NativeFileDialogExtendedConan(ConanFile):
         # deps.set_property("fontconfig", "cmake_target_name", "Fontconfig::Fontconfig")
         deps.generate()
 
+        if self.settings.os == "Linux":
+            # drag gtk3 from pkg-config
+            pkg = PkgConfigDeps(self)
+            pkg.generate()
+
     def build(self):
         cmake = CMake(self)
         cmake.configure()
@@ -120,7 +127,7 @@ class NativeFileDialogExtendedConan(ConanFile):
         self.cpp_info.set_property("cmake_target_name", "nfd::nfd")
 
         if self.settings.os in ["Macos"]:
-            self.cpp_info.frameworks = ["AppKit","UniformTypeIdentifiers"]
+            self.cpp_info.frameworks = ["AppKit", "UniformTypeIdentifiers"]
         # If they are needed on Linux, m, pthread and dl are usually needed on FreeBSD too
         # if self.settings.os in ["Linux", "FreeBSD"]:
         #     self.cpp_info.system_libs.append("m")
